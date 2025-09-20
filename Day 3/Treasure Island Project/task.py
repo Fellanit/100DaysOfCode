@@ -45,7 +45,7 @@ chosen_way = input("""Where you want to go?
     Type "Left" or "Right"\n """)
 
 if chosen_way == "Left" or chosen_way == "left":
-    across_the_see = input('There is a see. What you gonna do?\n Type "swim" or "wait"\n ')
+    across_the_see = input('There is a sea. What you gonna do?\n Type "swim" or "wait"\n ')
 else:
     print('''Oops!!\nYou fell into a hole☺\n
              YOU DIED!    
@@ -73,7 +73,7 @@ else:
     ''')
 
 if across_the_see == "wait":
-   the_right_door = input("That`s right! You waited and got help from eagle, that carried you over the see ;)\nThen you see three doors yellow, green, red and blue, where you want to go, traveler?\n")
+   the_right_door = input("That`s right! You waited and got help from eagle, that carried you over the sea ;)\nThen you see three doors yellow, green, red and blue, where you want to go, traveler?\n")
 else:
     print('''Oh noooo! You`ve met the White Shark itself! She was hungry, so...\n
                         YOU DIED!
