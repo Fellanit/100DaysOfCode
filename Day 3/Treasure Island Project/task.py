@@ -112,7 +112,7 @@ else:
     ''')
 
 if the_right_door == "green" or the_right_door == "Green":
-    print('''Yeess you`ve chose the right door and found a treasure chest!!
+    print('''Yeess you`ve chosen the right door and found a treasure chest!!
                                 YOU WON!    
 *******************************************************************************
           |                   |                  |                     |
