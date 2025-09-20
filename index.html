@@ -1,33 +1,201 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <title>My Game Demo</title>
+    <meta charset="utf-8">
+    <title>Treasure Island (browser demo)</title>
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      html, body { height:100%; margin:0; background:#111; }
-      .wrap { max-width:1100px; margin:0 auto; padding:16px; }
-      h1 { font:20px/1.4 monospace; color:#9f9; }
-      .frame { position:relative; width:100%; aspect-ratio: 16/9; }
-      .frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
-      a { color:#9f9; }
+      body { background:#111; color:#9f9; font:16px/1.5 monospace; margin:0; padding:20px; }
+      h2 { margin:0 0 12px 0; color:#9f9; }
+      #console { background:#000; color:#0f0; border:1px solid #333; border-radius:8px; padding:12px; min-height:260px; white-space:pre-wrap; }
+      #bar { margin-top:10px; display:flex; gap:8px; }
+      input { flex:1; background:#000; color:#0f0; border:1px solid #333; padding:8px; }
+      button { background:#0f0; color:#000; font-weight:700; border:0; padding:8px 12px; cursor:pointer; }
+      .hint { color:#7f7; opacity:.8; margin:8px 0 0; }
     </style>
   </head>
   <body>
-    <div class="wrap">
-      <h1>Click “Run” to play • якщо ввід не працює, клікни по консолі</h1>
-      <div class="frame">
-        <!-- ВСТАВ СВІЙ SRC НИЖЧЕ -->
-        <iframe
-          src="https://trinket.io/embed/python3/130746486393"
-          allowfullscreen
-        ></iframe>
-      </div>
-
-      <!-- опціонально: пряме посилання на Trinket -->
-      <p>Або відкрий напряму: 
-        <a href="https://trinket.io/python3/ТВІЙ_ID" target="_blank" rel="noreferrer">відкрити на trinket.io</a>
-      </p>
+    <h2>Treasure Island</h2>
+    <div id="console"></div>
+    <div id="bar">
+      <input id="inp" placeholder='type here (e.g. Left, wait, yellow)…' autofocus />
+      <button id="send">Enter</button>
+      <button id="restart">Restart</button>
     </div>
+    <div class="hint">Порада: натисни Enter у полі вводу. Кнопка Restart починає заново.</div>
+
+    <py-script>
+import asyncio
+from pyscript import Element
+from js import document
+
+out = Element("console")
+inp = Element("inp")
+queue = asyncio.Queue()
+
+def write(text=""):
+    out.write(text + ("\n" if not text.endswith("\n") else ""), append=True)
+
+def _submit(_=None):
+    val = inp.value.strip()
+    if val == "": 
+        return
+    out.write("> " + val + "\n", append=True)
+    inp.value = ""
+    queue.put_nowait(val)
+
+def _enter(e):
+    if e.key == "Enter":
+        _submit()
+
+document.getElementById("send").addEventListener("click", _submit)
+document.getElementById("inp").addEventListener("keydown", _enter)
+
+async def ainput(prompt=""):
+    if prompt:
+        write(prompt)
+    return await queue.get()
+
+# -------- YOUR GAME (adapted for browser) --------
+async def game():
+    write(r"""*******************************************************************************
+                  __..-----')
+        ,.--._ .-'_..--...-'
+       '-"'. _/_ /  ..--''""'-.
+       _.--""...:._:(_ ..:"::. \
+    .-' ..::--""_(##)#)"':. \ \)    \ _|_ /
+   /_:-:'/  :__(##)##)    ): )   '-./'   '\.-'
+   "  / |  :' :/""\///)  /:.'    --(       )--
+     / :( :( :(   (#//)  "       .-'\.___./'-.
+    / :/|\ :\_:\   \#//\            /  |  \
+    |:/ | ""--':\   (#//)              '
+    \/  \ :|  \ :\  (#//)
+         \:\   '.':. \#//\
+          ':|    "--'(#///)
+                     (#///)
+                     (#///)         ___/""\     
+                      \#///\           oo##
+                      (##///)         `-6 #
+                      (##///)          ,'`.
+                      (##///)         // `.\
+                      (##///)        ||o   \\
+                       \##///\        \-+--//
+                       (###///)       :_|_(/"""
++ "\n" + r"""                       (sjw////)__...--:: :...__"""
++ "\n" + r"""                       (#/::'''        :: :     """
++ '""' + r"""--.._
+                  __..-'''           __;: :            "-._
+          __..--""                  `---/ ;                '._
+ ___..--""                             `-'                    "-..___
+   (_ ""---....___                                     __...--"" _)
+     """
++ '"""' + r"""--...  ___"""
++ '"""""' + r"""-----......._______......----"""
++ '"""' + r"""     --"""
++ '"""' + r"""
+                   """
++ '""""' + r"""       ---.....   ___....----
+*******************************************************************************
+""")
+    write("Welcome to Treasure Island.")
+    write("Your mission is to find the treasure.")
+    chosen_way = (await ainput("""Where you want to go?
+    Type "Left" or "Right"\n """)).strip()
+
+    if chosen_way in ("Left","left"):
+        across_the_see = (await ainput('There is a see. What you gonna do?\n Type "swim" or "wait"\n ')).strip()
+    else:
+        write('''Oops!!\nYou fell into a hole☺\n
+             YOU DIED!    
+             
+⠀⠀⠀⠀⠀⠀⠀⣀⣤⡖⠖⠎⠍⢭⢫⣋⡋⡗⣒⠤⣀⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣖⣯⣷⣥⣶⢪⣿⢛⡅⣇⣷⢫⡟⣰⣯⣔⡩⡑⠢⣄⠀⠀⠀
+⠀⠀⠀⡜⢹⣯⣟⣻⢹⣏⢿⡻⡷⣫⡯⡟⣽⣷⣕⣓⡚⢙⢲⡗⡌⢧⡀⠀
+⠀⠀⢠⠷⣿⣝⣗⡿⣷⡳⣏⡏⢥⠆⡷⡖⢭⣮⣧⣬⣶⣟⣾⢬⡿⡆⣣⠃
+⠀⢀⣸⢀⢿⠟⣿⣟⡗⡣⡾⣗⢄⣛⠱⣯⣽⠟⣜⣍⢪⡽⢯⣙⣧⠄⢼⡆
+⠀⠀⡇⣽⡻⠛⡿⠡⠭⠥⡥⣍⠒⡙⢻⣇⠛⢋⢛⣋⣋⣗⠓⠞⢛⣢⣻⢱
+⠀⠁⡯⣿⣕⡛⠆⠀⠀⠀⠀⠈⢳⢹⡷⡏⠁⠉⢃⢟⡂⠀⠀⠀⠀⠈⢩⣸
+⠀⢤⣋⡗⣇⣢⠀⠀⠸⣯⣢⡄⠈⢐⡇⠇⠀⠀⢆⡺⡆⢠⢻⣷⡇⠀⢱⣸
+⠀⡝⡿⡿⠴⣘⠀⠀⠀⠀⣤⣀⡁⡜⡇⡃⠀⠀⢃⢴⡃⠈⠉⠉⠁⠀⢸⢼
+⠀⣷⣇⡟⡇⡫⠀⠀⠀⡄⠀⠙⠳⣗⠃⡅⠀⠀⢅⣛⡇⠀⠀⡆⢔⡆⢹⢸
+⠀⡯⣬⣇⣛⡇⠀⠀⠀⡗⣆⠀⠨⠷⡑⠄⠀⠀⢂⣻⡁⠀⠀⠣⡁⡆⣾⢸
+⠀⡇⢧⡇⡶⡗⡂⠂⡦⣏⣻⣆⣀⠠⢛⡄⠀⠀⠅⡧⡀⠀⠀⣃⢂⡂⣵⢨
+⠀⡗⣻⢟⣻⡻⡧⣇⣶⢪⣽⣯⢯⣷⡷⣏⣝⣍⡏⣏⣃⣐⢀⣳⣽⣦⣉⢸
+⠀⡗⣞⡍⡏⠜⢭⠙⢎⣿⣿⣟⣃⢃⣕⣹⢽⣿⠿⡿⢻⡟⠿⣯⢿⠏⠍⢰
+⠀⡇⢚⡆⣻⠎⢂⡃⣠⢌⢓⠡⡂⡀⡦⡛⢘⡲⣋⣹⢐⢇⡷⠟⣭⠳⠣⢸
+⠀⡗⢦⡍⢷⠇⠂⠘⠸⣇⣏⢆⡴⣁⠄⣹⡏⠄⢵⢴⣂⡫⢘⣉⣰⠆⡁⢸
+⠀⡂⢯⢨⠯⠘⢒⡿⡥⣛⣡⡒⡱⣶⣂⡏⣓⡜⢖⠜⣧⣋⣽⡖⣧⡃⡂⢸
+⠀⣒⠭⢍⢃⠀⡉⡏⢗⡷⣺⡷⡎⠂⣆⡁⣒⡖⡰⣱⠧⢆⢅⣢⣟⡿⡁⢸
+⠀⣽⡇⡲⢀⣋⣇⢹⣗⣠⣌⡈⣲⣁⣆⡽⣃⣔⢅⣭⣙⣭⢞⡙⡝⠬⠄⢸
+⠒⠊⠁⡟⠨⢝⢓⢛⣤⡂⣁⠤⡉⡁⢅⠁⡡⢀⠍⣍⠡⢋⡥⣍⡈⠁⠁⢘⠀⠀⠀⠀⠀⠀''')
+        return
+
+    if across_the_see == "wait":
+        the_right_door = (await ainput("That`s right! You waited and got help from eagle, that carried you over the see ;)\nThen you see three doors yellow, green, red and blue, where you want to go, traveler?\n")).strip()
+    else:
+        write('''Oh noooo! You`ve met the White Shark itself! She was hungry, so...\n
+                        YOU DIED!
+    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣤⣤⣤⣤⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⠿⠟⠛⠉⠉⠉⠉⠉⠉⠉⠉⠛⠿⢿⣶⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⡿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   ⠀⠈⠙⠿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    ⠈⠻⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠈⢿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠈⢿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⠘⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⢰⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⡄⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⢠⠇⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣿⣇⢀⡿⠂⠀⣠⣶⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣿⣿⣤⡀⠀⢸⣆⢠⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⠁⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⢻⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡏⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠸⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠃⠀⠘⣿⣿⣿⣿⣿⣿⡿⠛⠁⠀⢀⡀⡀⠀⠀⠙⠻⣿⣿⣿⣿⣿⣿⠟⠀⠀⢻⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀
+...''')
+        return
+
+    if the_right_door in ("green","Green"):
+        write(r'''Yeess you`ve chosen the right door and found a treasure chest!!
+                                YOU WON!    
+*******************************************************************************
+          |                   |                  |                     |
+ _________|________________.=""_;=.______________|_____________________|_______
+|                   |  ,-"_,=""     `"=.|                  |
+|___________________|__"=._o`"-._        `"=.______________|___________________
+          |                `"=._o`"=._      _`"=._                     |
+ ... (win art trimmed for brevity in this block) ...
+''')
+    elif the_right_door in ("red","Red"):
+        write(r'''OMG inside is everything on fire!!
+__   _____  _   _      _    ____  _____                              
+\ \ / / _ \| | | |    / \  |  _ \| ____|                             
+ \ V / | | | | | |   / _ \ | |_) |  _|                               
+  | || |_| | |_| |  / ___ \|  _ <| |___                              
+ _|_| \___/_\___/  /_/ _ \_\_| \_\_____|___   _____        ___   _ _ 
+| __ )| | | |  _ \| \ | | ____|  _ \  |  _ \ / _ \ \      / / \ | | |
+|  _ \| | | | |_) |  \| |  _| | | | | | | | | | | \ \ /\ / /|  \| | |
+| |_) | |_| |  _ <| |\  | |___| |_| | | |_| | |_| |\ V  V / | |\  |_|
+|____/ \___/|_| \_\_| \_|_____|____/  |____/ \___/  \_/\_/  |_| \_(_)                                                                                                      
+████████████████████████████████████████████ (…)
+''')
+    elif the_right_door in ("Yellow","yellow"):
+        write(r'''It was your biggest mistake...
+                    You were eating by beasts!☠️
+(…big ascii…)''')
+    elif the_right_door in ("blue","Blue"):
+        write(r''' You were teleported god knows where
+                        You died!
+(…ascii…)''')
+    else:
+        write("Wrong input)\n GAME OVER!")
+
+def start(_=None):
+    out.clear(); inp.value = ""
+    asyncio.create_task(game())
+
+document.getElementById("restart").addEventListener("click", start)
+# автозапуск
+start()
+    </py-script>
   </body>
 </html>
