@@ -31,7 +31,9 @@ figures = [rock, paper, scissors]
 users_input = int(input("Hello it`s Rock-Paper-Scissors game!\nWhat do you choose? Type 1 for Rock, 2 for Paper, 3 for Scissors\n"))
 users_figure = users_input - 1
 com_figure = random.randint(0,2)
+print("Your choice: ")
 print(figures[users_figure])
+print("Computer choice: ")
 print(figures[com_figure])
 if figures[users_figure] == figures[com_figure]:
     print("Draw!")
