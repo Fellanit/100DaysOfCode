@@ -1,90 +1,91 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Rock · Paper · Scissors</title>
-  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
   <style>
-    body{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0b0e14;color:#eaeef2;margin:0;min-height:100vh;display:grid;place-items:center}
-    .app{width:min(700px,92vw);padding:24px}
-    .buttons{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
-    button{padding:10px 14px;border-radius:10px;border:2px solid #9ecbff;background:#151822;color:#9ecbff;cursor:pointer}
-    .board{background:#111420;border:1px solid #2a2f3a;border-radius:12px;padding:16px}
-    .row{display:flex;gap:16px;justify-content:space-between}
-    .cell{flex:1}
-    pre{margin:8px 0}
+    body {
+      background: #0b0e14;
+      color: #eaeef2;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+    .console {
+      background: #111420;
+      border: 1px solid #2a2f3a;
+      border-radius: 8px;
+      padding: 10px;
+      width: 90%;
+      max-width: 600px;
+      height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-top: 20px;
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 2px solid #9ecbff;
+      background: #151822;
+      color: #9ecbff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1f2330;
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <h1>✊ Rock · Paper · Scissors</h1>
-    <div class="buttons">
-      <button py-click="play('rock')">Rock</button>
-      <button py-click="play('paper')">Paper</button>
-      <button py-click="play('scissors')">Scissors</button>
-      <button py-click="reset()">Reset</button>
-    </div>
-
-    <div class="board">
-      <div class="row">
-        <div class="cell"><strong>You:</strong><pre id="you_art"></pre></div>
-        <div class="cell"><strong>Computer:</strong><pre id="com_art"></pre></div>
-      </div>
-      <p><strong>Result:</strong> <span id="result">—</span></p>
-    </div>
+  <h1>✊ Rock · Paper · Scissors</h1>
+  <div class="buttons">
+    <button onclick="play(0)">Rock</button>
+    <button onclick="play(1)">Paper</button>
+    <button onclick="play(2)">Scissors</button>
+    <button onclick="resetConsole()">Clear</button>
   </div>
 
-  <py-script>
-from pyscript import Element
-import random
+  <div id="console" class="console"></div>
 
-ART = {
-    "rock": '''
-    _______
----'   ____)
-      (_____)
-      (_____)
-      (____)
----.__(___)
-''',
-    "paper": '''
-     _______
----'    ____)____
-           ______)
-          _______)
-         _______)
----.__________)
-''',
-    "scissors": '''
-    _______
----'   ____)____
-          ______)
-       __________)
-      (____)
----.__(___)
-'''
-}
+  <script>
+    const figures = ["Rock", "Paper", "Scissors"];
+    const consoleDiv = document.getElementById("console");
 
-def show(u, c, msg):
-    Element("you_art").write(ART[u])
-    Element("com_art").write(ART[c])
-    Element("result").write(msg)
+    function log(msg) {
+      consoleDiv.innerText += msg + "\n";
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
 
-def winner(user, com):
-    if user == com: return "Draw!"
-    rules = {("rock","scissors"), ("paper","rock"), ("scissors","paper")}
-    return "You win!" if (user, com) in rules else "You lose!"
+    function play(userChoice) {
+      const comChoice = Math.floor(Math.random() * 3);
+      log(`You chose: ${figures[userChoice]}`);
+      log(`Computer chose: ${figures[comChoice]}`);
+      if (userChoice === comChoice) {
+        log("Result: Draw!\n");
+      } else if (
+        (userChoice === 0 && comChoice === 2) ||
+        (userChoice === 1 && comChoice === 0) ||
+        (userChoice === 2 && comChoice === 1)
+      ) {
+        log("Result: You win!\n");
+      } else {
+        log("Result: You lose!\n");
+      }
+    }
 
-def play(choice:str):
-    com = random.choice(["rock","paper","scissors"])
-    show(choice, com, winner(choice, com))
-
-def reset():
-    Element("you_art").write("")
-    Element("com_art").write("")
-    Element("result").write("—")
-  </py-script>
+    function resetConsole() {
+      consoleDiv.innerText = "";
+    }
+  </script>
 </body>
 </html>
