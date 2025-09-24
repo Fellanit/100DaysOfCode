@@ -7,63 +7,84 @@
   <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
   <script defer src="https://pyscript.net/latest/pyscript.js"></script>
   <style>
-    body { background:#0b0e14; color:#eaeef2; font-family:monospace; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
-    .console {
-      width: 600px;
-      background: #111420;
-      border: 1px solid #2a2f3a;
-      border-radius: 8px;
-      padding: 16px;
-      height: 400px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-    }
-    input {
-      width: 100%;
-      background: #0b0e14;
-      border: none;
-      color: #eaeef2;
-      font-family: monospace;
-      font-size: 1rem;
-      outline: none;
-    }
+    body{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0b0e14;color:#eaeef2;margin:0;min-height:100vh;display:grid;place-items:center}
+    .app{width:min(700px,92vw);padding:24px}
+    .buttons{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+    button{padding:10px 14px;border-radius:10px;border:2px solid #9ecbff;background:#151822;color:#9ecbff;cursor:pointer}
+    .board{background:#111420;border:1px solid #2a2f3a;border-radius:12px;padding:16px}
+    .row{display:flex;gap:16px;justify-content:space-between}
+    .cell{flex:1}
+    pre{margin:8px 0}
   </style>
 </head>
 <body>
-  <div class="console" id="console"></div>
-  <input id="user_input" placeholder="Type your choice (1=Rock, 2=Paper, 3=Scissors) and press Enter">
+  <div class="app">
+    <h1>✊ Rock · Paper · Scissors</h1>
+    <div class="buttons">
+      <button py-click="play('rock')">Rock</button>
+      <button py-click="play('paper')">Paper</button>
+      <button py-click="play('scissors')">Scissors</button>
+      <button py-click="reset()">Reset</button>
+    </div>
+
+    <div class="board">
+      <div class="row">
+        <div class="cell"><strong>You:</strong><pre id="you_art"></pre></div>
+        <div class="cell"><strong>Computer:</strong><pre id="com_art"></pre></div>
+      </div>
+      <p><strong>Result:</strong> <span id="result">—</span></p>
+    </div>
+  </div>
 
   <py-script>
 from pyscript import Element
 import random
 
-figures = ["Rock", "Paper", "Scissors"]
+ART = {
+    "rock": '''
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+''',
+    "paper": '''
+     _______
+---'    ____)____
+           ______)
+          _______)
+         _______)
+---.__________)
+''',
+    "scissors": '''
+    _______
+---'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+'''
+}
 
-def log(msg):
-    console = Element("console")
-    console.write(console.element.innerText + str(msg) + "\n")
-    console.element.scrollTop = console.element.scrollHeight
+def show(u, c, msg):
+    Element("you_art").write(ART[u])
+    Element("com_art").write(ART[c])
+    Element("result").write(msg)
 
-def play(choice):
-    user = int(choice) - 1
-    com = random.randint(0, 2)
-    log(f"You chose {figures[user]}")
-    log(f"Computer chose {figures[com]}")
-    if user == com:
-        log("Draw!\n")
-    elif (user == 0 and com == 2) or (user == 1 and com == 0) or (user == 2 and com == 1):
-        log("You win!\n")
-    else:
-        log("You lose!\n")
+def winner(user, com):
+    if user == com: return "Draw!"
+    rules = {("rock","scissors"), ("paper","rock"), ("scissors","paper")}
+    return "You win!" if (user, com) in rules else "You lose!"
 
-def handle_input(event):
-    value = Element("user_input").element.value
-    if value.strip():
-        play(value)
-        Element("user_input").element.value = ""
+def play(choice:str):
+    com = random.choice(["rock","paper","scissors"])
+    show(choice, com, winner(choice, com))
 
-# підключаємо JS подію
-Element("user_input").element.addEventListener("keydown", lambda e: handle_input(e) if e.key=="Enter" else None)
+def reset():
+    Element("you_art").write("")
+    Element("com_art").write("")
+    Element("result").write("—")
   </py-script>
 </body>
 </html>
