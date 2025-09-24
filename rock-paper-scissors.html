@@ -3,17 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rock Paper Scissors</title>
+  <title>Rock · Paper · Scissors</title>
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
   <style>
-    html, body { height: 100%; margin: 0; }
-    iframe { width: 100%; height: 100%; border: 0; }
+    body { background:#0b0e14; color:#eaeef2; font-family:monospace; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+    .console {
+      width: 600px;
+      background: #111420;
+      border: 1px solid #2a2f3a;
+      border-radius: 8px;
+      padding: 16px;
+      height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    input {
+      width: 100%;
+      background: #0b0e14;
+      border: none;
+      color: #eaeef2;
+      font-family: monospace;
+      font-size: 1rem;
+      outline: none;
+    }
   </style>
 </head>
 <body>
-  <iframe 
-    src="https://replit.com/@Fellanit/RockPaperScissorsGame?embed=true&outputonly=1"
-    allowfullscreen
-    loading="lazy">
-  </iframe>
+  <div class="console" id="console"></div>
+  <input id="user_input" placeholder="Type your choice (1=Rock, 2=Paper, 3=Scissors) and press Enter">
+
+  <py-script>
+from pyscript import Element
+import random
+
+figures = ["Rock", "Paper", "Scissors"]
+
+def log(msg):
+    console = Element("console")
+    console.write(console.element.innerText + str(msg) + "\n")
+    console.element.scrollTop = console.element.scrollHeight
+
+def play(choice):
+    user = int(choice) - 1
+    com = random.randint(0, 2)
+    log(f"You chose {figures[user]}")
+    log(f"Computer chose {figures[com]}")
+    if user == com:
+        log("Draw!\n")
+    elif (user == 0 and com == 2) or (user == 1 and com == 0) or (user == 2 and com == 1):
+        log("You win!\n")
+    else:
+        log("You lose!\n")
+
+def handle_input(event):
+    value = Element("user_input").element.value
+    if value.strip():
+        play(value)
+        Element("user_input").element.value = ""
+
+# підключаємо JS подію
+Element("user_input").element.addEventListener("keydown", lambda e: handle_input(e) if e.key=="Enter" else None)
+  </py-script>
 </body>
 </html>
