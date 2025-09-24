@@ -6,86 +6,110 @@
   <title>Rock · Paper · Scissors</title>
   <style>
     body {
-      background: #0b0e14;
-      color: #eaeef2;
+      background: black;
+      color: #00ff00;
       font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
       margin: 0;
+      padding: 20px;
     }
-    .console {
-      background: #111420;
-      border: 1px solid #2a2f3a;
-      border-radius: 8px;
-      padding: 10px;
-      width: 90%;
-      max-width: 600px;
-      height: 300px;
-      overflow-y: auto;
+    #console {
       white-space: pre-wrap;
-      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.5rem;
     }
-    .buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    button {
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: 2px solid #9ecbff;
-      background: #151822;
-      color: #9ecbff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #1f2330;
+    input {
+      background: transparent;
+      border: none;
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 1rem;
+      outline: none;
+      width: 100%;
     }
   </style>
 </head>
 <body>
-  <h1>✊ Rock · Paper · Scissors</h1>
-  <div class="buttons">
-    <button onclick="play(0)">Rock</button>
-    <button onclick="play(1)">Paper</button>
-    <button onclick="play(2)">Scissors</button>
-    <button onclick="resetConsole()">Clear</button>
-  </div>
-
-  <div id="console" class="console"></div>
+  <div id="console"></div>
+  <input id="input" autofocus>
 
   <script>
-    const figures = ["Rock", "Paper", "Scissors"];
     const consoleDiv = document.getElementById("console");
+    const input = document.getElementById("input");
 
-    function log(msg) {
-      consoleDiv.innerText += msg + "\n";
-      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    const rock = `
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+`;
+    const paper = `
+    _______
+---'   ____)____
+          ______)
+          _______)
+         _______)
+---.__________)
+`;
+    const scissors = `
+    _______
+---'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+`;
+
+    const figures = [rock, paper, scissors];
+
+    function log(text) {
+      consoleDiv.innerText += text + "\n";
+      window.scrollTo(0, document.body.scrollHeight);
     }
 
-    function play(userChoice) {
-      const comChoice = Math.floor(Math.random() * 3);
-      log(`You chose: ${figures[userChoice]}`);
-      log(`Computer chose: ${figures[comChoice]}`);
-      if (userChoice === comChoice) {
-        log("Result: Draw!\n");
-      } else if (
-        (userChoice === 0 && comChoice === 2) ||
-        (userChoice === 1 && comChoice === 0) ||
-        (userChoice === 2 && comChoice === 1)
-      ) {
-        log("Result: You win!\n");
-      } else {
-        log("Result: You lose!\n");
+    function askChoice() {
+      log("Hello it`s Rock-Paper-Scissors game!");
+      log("What do you choose? Type 1 for Rock, 2 for Paper, 3 for Scissors");
+    }
+
+    function play(userInput) {
+      const userIndex = parseInt(userInput) - 1;
+      if (isNaN(userIndex) || userIndex < 0 || userIndex > 2) {
+        log("Invalid input. Try again.\n");
+        askChoice();
+        return;
       }
+
+      const comIndex = Math.floor(Math.random() * 3);
+
+      log(figures[userIndex]);
+      log(figures[comIndex]);
+
+      if (figures[userIndex] === figures[comIndex]) {
+        log("Draw!\n");
+      } else if (
+        (userIndex === 0 && comIndex === 2) ||
+        (userIndex === 1 && comIndex === 0) ||
+        (userIndex === 2 && comIndex === 1)
+      ) {
+        log("You win!\n");
+      } else {
+        log("You lose!\n");
+      }
+
+      askChoice();
     }
 
-    function resetConsole() {
-      consoleDiv.innerText = "";
-    }
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const value = input.value.trim();
+        input.value = "";
+        play(value);
+      }
+    });
+
+    askChoice();
   </script>
 </body>
 </html>
