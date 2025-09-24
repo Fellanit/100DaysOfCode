@@ -1,29 +1,47 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Treasure Island — demo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      html,body{margin:0;height:100%;background:#111}
-      .wrap{max-width:1100px;margin:0 auto;padding:16px}
-      h1{font:18px/1.4 monospace;color:#9f9;margin:0 0 10px}
-      .frame{position:relative;width:100%;aspect-ratio:16/9}
-      .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-      a{color:#9f9}
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>Click “Run” to play • якщо ввід не працює, клацни по консолі</h1>
-      <div class="frame">
-        <iframe
-          src="https://trinket.io/embed/python3/e81073db391d?outputOnly=true&runOption=run"
-          allowfullscreen
-        ></iframe>
-      </div>
-      <!-- опц.: пряме посилання -->
-      <p><a href="https://trinket.io/python3/SRC_З_TRINKET" target="_blank" rel="noreferrer">Відкрити на trinket.io</a></p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Python Games</title>
+  <style>
+    :root { --bg:#0b0e14; --fg:#eaeef2; --acc:#9ecbff; }
+    * { box-sizing:border-box }
+    body {
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      background:var(--bg); color:var(--fg);
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .wrap { width:min(700px, 92vw); padding:32px; text-align:center; }
+    h1 { margin:0 0 18px }
+    p { opacity:.85; margin:0 0 28px }
+    .grid {
+      display:grid; gap:14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    }
+    a.card {
+      display:block; padding:16px 18px; border:2px solid var(--acc);
+      border-radius:14px; text-decoration:none; color:var(--acc);
+      transition:transform .08s ease, background .15s ease;
+    }
+    a.card:hover { transform:translateY(-2px); background:#151822 }
+    small { display:block; opacity:.8; margin-top:6px; color:#c9d7ff }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🎮 My Python Games</h1>
+    <p>Вибери гру, щоб зіграти:</p>
+    <div class="grid">
+      <a class="card" href="rock-paper-scissors.html">
+        ✊ Rock · Paper · Scissors
+        <small>Replit embed</small>
+      </a>
+      <a class="card" href="treasure-island.html">
+        🏝️ Treasure Island Quest
+        <small>Replit embed</small>
+      </a>
     </div>
-  </body>
+  </div>
+</body>
 </html>
